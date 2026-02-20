@@ -1,0 +1,855 @@
+// <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎂 Happy Birthday Dayki! 🎮</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cinzel:wght@700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: none;
+        }
+        
+        body {
+            background: #0a0a0a;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: #fff;
+        }
+        
+        .game-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            padding: 10px;
+        }
+        
+        .birthday-banner {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+            color: #ffd700;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ff6b9d; }
+        }
+        
+        .level-indicator {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+        
+        .level-dark-souls { 
+            color: #ff9d6b; 
+            text-shadow: 0 0 10px #ff6b35;
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.1);
+        }
+        .level-mobile-legends { 
+            color: #80e5ff; 
+            text-shadow: 0 0 10px #00d9ff;
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.1);
+        }
+        .level-god-of-war { 
+            color: #ff6666; 
+            text-shadow: 0 0 10px #ff0000;
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        .level-resident-evil { 
+            color: #80ff80; 
+            text-shadow: 0 0 10px #00ff00;
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        .level-final { 
+            color: #ffb6c1; 
+            text-shadow: 0 0 20px #ff69b4;
+            border-color: #ff69b4;
+            background: rgba(255, 105, 180, 0.2);
+        }
+        
+        #gameCanvas {
+            width: 100%;
+            border: 4px solid;
+            border-radius: 8px;
+            display: block;
+            image-rendering: pixelated;
+        }
+        
+        .ui-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.7em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .stat-box {
+            background: rgba(0,0,0,0.8);
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 2px solid #444;
+            color: #fff;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border: 3px solid #555;
+            color: #fff;
+            padding: 15px 25px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7em;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 0 #000;
+        }
+        
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #000;
+        }
+        
+        .btn-primary {
+            border-color: #ff6b9d;
+            background: linear-gradient(145deg, #ff6b9d, #c44569);
+            box-shadow: 0 4px 0 #8b2635;
+        }
+        
+        .btn-primary:active {
+            box-shadow: 0 0 0 #8b2635;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+        
+        .modal p {
+            font-size: 0.75em;
+            line-height: 2;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .message-special {
+            color: #ff6b9d;
+            font-size: 0.9em;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px dashed #ff6b9d;
+            border-radius: 10px;
+            background: rgba(255,107,157,0.15);
+            line-height: 1.8;
+        }
+        
+        .hearts-decoration {
+            font-size: 2.5em;
+            margin: 15px 0;
+            animation: heartbeat 1s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #222;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 2px solid #444;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff6b9d, #ff0000);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+        }
+        
+        .cake-emoji {
+            font-size: 3em;
+            margin: 10px;
+            display: inline-block;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @media (max-width: 600px) {
+            .modal h2 { font-size: 1em; }
+            .modal p { font-size: 0.65em; }
+            .btn { padding: 12px 18px; font-size: 0.6em; }
+            .level-indicator { font-size: 0.7em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="birthday-banner">
+            🎂 FELIZ CUMPLEAÑOS DAYKI 🎂
+        </div>
+        <div class="level-indicator" id="levelTitle">PREPÁRATE DAY</div>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        
+        <div class="ui-panel">
+            <div class="stat-box" id="scoreBox">
+                ❤️: <span id="score">0</span>/5
+            </div>
+            <div class="stat-box" id="levelBox">
+                NIVEL: <span id="currentLevel">1</span>/4
+            </div>
+            <div class="stat-box" id="livesBox">
+                VIDAS: <span id="lives">3</span> 🎮
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="leftBtn">◀ IZQ</button>
+            <button class="btn btn-primary" id="actionBtn">⚔️ ATACAR</button>
+            <button class="btn" id="rightBtn">DER ▶</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Inicio -->
+    <div class="modal active" id="startScreen">
+        <div class="modal-content" style="border-color: #ffd700;">
+            <div class="cake-emoji">🎂</div>
+            <h2>🎮 EPIC BIRTHDAY QUEST 🎮</h2>
+            <p>Para: Dayki "Puchi" 🎂<br><br>
+            4 mundos. 4 juegos. 1 corazón.<br>
+            ¿Podrás conquistar todos los niveles y descubrir el mensaje final?</p>
+            <div class="hearts-decoration">🎮 ❤️ 🎂</div>
+            <button class="btn btn-primary" onclick="startGame()">START GAME</button>
+        </div>
+    </div>
+
+    <!-- Transición de Nivel -->
+    <div class="modal" id="levelScreen">
+        <div class="modal-content" id="levelModalContent">
+            <h2 id="levelName">NIVEL COMPLETADO</h2>
+            <p id="levelMessage"></p>
+            <div class="message-special" id="levelSpecial"></div>
+            <button class="btn btn-primary" onclick="nextLevel()">SIGUIENTE NIVEL ➤</button>
+        </div>
+    </div>
+
+    <!-- Pantalla Final -->
+    <div class="modal" id="finalScreen">
+        <div class="modal-content" style="border-color: #ff69b4; background: linear-gradient(145deg, #2a1a2a, #1a0a1a);">
+            <div class="cake-emoji">🎉</div>
+            <h2 style="color: #ff69b4; font-size: 1.2em;">🎂 QUEST COMPLETADA 🎂</h2>
+            <p style="color: #ffb6c1;">Felicidades Dayki, has demostrado ser el mejor gamer y el mejor Puchi.</p>
+            <div class="message-special" style="border-color: #ff69b4; background: rgba(255,105,180,0.2);">
+                <p style="font-size: 0.85em; color: #fff; line-height: 2.2;">
+                    <span style="color: #ffd700; font-size: 1.2em;">🎂 Feliz Cumpleaños Day 🎂</span><br><br>
+                    "Eres mi Player 1 en este juego llamado vida.<br>
+                    Contigo cada día es un speedrun de felicidad.<br>
+                    Gracias por ser mi mejor equipo, mi MVP, mi Puchi favorito.<br><br>
+                    <span style="color: #ff69b4; font-size: 1.1em;">¿Continuamos esta party juntos? 💕</span>"
+                </p>
+            </div>
+            <div class="hearts-decoration">💕 🎂 💕</div>
+            <button class="btn btn-primary" onclick="location.reload()">JUGAR DE NUEVO</button>
+        </div>
+    </div>
+
+    <!-- Game Over -->
+    <div class="modal" id="gameOverScreen">
+        <div class="modal-content" style="border-color: #ff0000;">
+            <h2 style="color: #ff6666;">💀 GAME OVER 💀</h2>
+            <p>Incluso los mejores gamers necesitan descansar.<br>Pero recuerda Day: "Git gud" también aplica al amor.<br>¡Inténtalo de nuevo, Puchi!</p>
+            <button class="btn btn-primary" onclick="retryLevel()">REINTENTAR</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // CONFIGURACIÓN EQUILIBRADA - NI FÁCIL NI DIFÍCIL
+        const levels = [
+            {
+                name: "DARK SOULS",
+                class: "level-dark-souls",
+                subtitle: "Prepare to Love",
+                message: "Day, como en Dark Souls, el amor también requiere paciencia y perseverancia.",
+                special: "🔥 Has encendido la hoguera de nuestros corazones, Puchi 🔥",
+                theme: { 
+                    bg: '#2d1f1f',
+                    grid: '#ff6b35', 
+                    accent: '#ff9d6b',
+                    enemy: '💀', 
+                    collect: '🔥',
+                    collectColor: '#ff6b35'
+                },
+                // VELOCIDADES EQUILIBRADAS
+                enemySpeed: 3,
+                enemySpawnRate: 70,
+                collectibleSpeed: 3,
+                projectileSpeed: 0
+            },
+            {
+                name: "MOBILE LEGENDS",
+                class: "level-mobile-legends",
+                subtitle: "5v5 Love Battle",
+                message: "Como en el ML, Day, contigo siempre tengo el mejor equipo.",
+                special: "🏆 PENTAKILL DE AMOR 🏆<br>Eres mi MVP permanente, Dayki",
+                theme: { 
+                    bg: '#0f1f2f', 
+                    grid: '#00d9ff',
+                    accent: '#80e5ff',
+                    enemy: '⚔️', 
+                    collect: '💎',
+                    collectColor: '#00d9ff'
+                },
+                enemySpeed: 3.5,
+                enemySpawnRate: 60,
+                collectibleSpeed: 3.5,
+                projectileSpeed: 0,
+                zigzag: true
+            },
+            {
+                name: "GOD OF WAR",
+                class: "level-god-of-war",
+                subtitle: "Ragnarök of Hearts",
+                message: "Day, eres más fuerte que Kratos, porque conquistaste mi corazón sin violencia.",
+                special: "🪓 BOY... ¿Quieres ser mi compañero de aventuras eternas? 🪓",
+                theme: { 
+                    bg: '#2f0f0f', 
+                    grid: '#ff0000',
+                    accent: '#ff6666',
+                    enemy: '🐺', 
+                    collect: '⚡',
+                    collectColor: '#ffd700'
+                },
+                enemySpeed: 4,
+                enemySpawnRate: 55,
+                collectibleSpeed: 4,
+                projectileSpeed: 0,
+                enemiesHaveHP: true
+            },
+            {
+                name: "RESIDENT EVIL",
+                class: "level-resident-evil",
+                subtitle: "Biohazard of Love",
+                message: "Incluso en el apocalipsis zombie, Day, tú eres mi cura.",
+                special: "🧪 El T-Virus del amor me infectó... y solo tú tienes la cura, Puchi 🧪",
+                theme: { 
+                    bg: '#0f1f0f',
+                    grid: '#00ff00',
+                    accent: '#80ff80',
+                    enemy: '🧟', 
+                    collect: '💉',
+                    collectColor: '#ff0000'
+                },
+                enemySpeed: 3.8,
+                enemySpawnRate: 50,
+                collectibleSpeed: 4,
+                projectileSpeed: 5,
+                spawnProjectiles: true
+            }
+        ];
+        
+        let currentLevel = 0;
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        let frameCount = 0;
+        
+        const player = {
+            x: 280, y: 320, width: 40, height: 40,
+            speed: 6, // Un poco más rápido que antes
+            color: '#4ecdc4',
+            attacking: false, attackFrame: 0
+        };
+        
+        let collectibles = [];
+        let enemies = [];
+        let particles = [];
+        let projectiles = [];
+        
+        let keys = {};
+        let touchLeft = false, touchRight = false, touchAction = false;
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if(e.key === ' ' || e.key === 'ArrowUp') player.attacking = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+            if(e.key === ' ' || e.key === 'ArrowUp') player.attacking = false;
+        });
+        
+        document.getElementById('leftBtn').addEventListener('touchstart', (e) => { e.preventDefault(); touchLeft = true; });
+        document.getElementById('leftBtn').addEventListener('touchend', (e) => { e.preventDefault(); touchLeft = false; });
+        document.getElementById('leftBtn').addEventListener('mousedown', () => touchLeft = true);
+        document.getElementById('leftBtn').addEventListener('mouseup', () => touchLeft = false);
+        
+        document.getElementById('rightBtn').addEventListener('touchstart', (e) => { e.preventDefault(); touchRight = true; });
+        document.getElementById('rightBtn').addEventListener('touchend', (e) => { e.preventDefault(); touchRight = false; });
+        document.getElementById('rightBtn').addEventListener('mousedown', () => touchRight = true);
+        document.getElementById('rightBtn').addEventListener('mouseup', () => touchRight = false);
+        
+        document.getElementById('actionBtn').addEventListener('touchstart', (e) => { e.preventDefault(); player.attacking = true; });
+        document.getElementById('actionBtn').addEventListener('touchend', (e) => { e.preventDefault(); player.attacking = false; });
+        document.getElementById('actionBtn').addEventListener('mousedown', () => player.attacking = true);
+        document.getElementById('actionBtn').addEventListener('mouseup', () => player.attacking = false);
+        
+        function startGame() {
+            document.getElementById('startScreen').classList.remove('active');
+            currentLevel = 0;
+            lives = 3;
+            loadLevel();
+        }
+        
+        function loadLevel() {
+            const level = levels[currentLevel];
+            const titleEl = document.getElementById('levelTitle');
+            titleEl.className = 'level-indicator ' + level.class;
+            titleEl.innerHTML = `🎂 NIVEL ${currentLevel + 1}: ${level.name} 🎂<br><small>${level.subtitle}</small>`;
+            
+            document.getElementById('currentLevel').textContent = currentLevel + 1;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('lives').textContent = lives;
+            
+            canvas.style.borderColor = level.theme.accent;
+            
+            player.x = 280;
+            score = 0;
+            collectibles = [];
+            enemies = [];
+            particles = [];
+            projectiles = [];
+            frameCount = 0;
+            
+            updateProgressBar();
+            gameRunning = true;
+            gameLoop();
+        }
+        
+        function updateProgressBar() {
+            const progress = ((currentLevel * 5 + score) / 20) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        function spawnEntities() {
+            const level = levels[currentLevel];
+            
+            if(frameCount % 70 === 0 && collectibles.length < 3) {
+                collectibles.push({
+                    x: Math.random() * (canvas.width - 40),
+                    y: -40,
+                    size: 35,
+                    speed: level.collectibleSpeed + Math.random(),
+                    pulse: 0
+                });
+            }
+            
+            if(frameCount % level.enemySpawnRate === 0) {
+                enemies.push({
+                    x: Math.random() * (canvas.width - 40),
+                    y: -40,
+                    size: 40,
+                    speed: level.enemySpeed + Math.random(),
+                    hp: level.enemiesHaveHP ? 2 : 1,
+                    maxHp: level.enemiesHaveHP ? 2 : 1,
+                    zigzag: level.zigzag ? Math.random() * Math.PI * 2 : 0
+                });
+            }
+            
+            if(level.spawnProjectiles && frameCount % 80 === 0 && enemies.length > 0) {
+                const shooter = enemies[Math.floor(Math.random() * enemies.length)];
+                projectiles.push({
+                    x: shooter.x + 20,
+                    y: shooter.y + 35,
+                    speed: level.projectileSpeed,
+                    size: 12
+                });
+            }
+        }
+        
+        function update() {
+            if(!gameRunning) return;
+            
+            const level = levels[currentLevel];
+            
+            if((keys['ArrowLeft'] || touchLeft) && player.x > 0) player.x -= player.speed;
+            if((keys['ArrowRight'] || touchRight) && player.x < canvas.width - player.width) player.x += player.speed;
+            
+            if(player.attacking) player.attackFrame = 10;
+            if(player.attackFrame > 0) player.attackFrame--;
+            
+            collectibles = collectibles.filter(c => {
+                c.y += c.speed;
+                c.pulse += 0.1;
+                
+                if(checkCollision(player, c)) {
+                    score++;
+                    createParticles(c.x + 17, c.y + 17, level.theme.collectColor);
+                    document.getElementById('score').textContent = score;
+                    updateProgressBar();
+                    
+                    if(score >= 5) levelComplete();
+                    return false;
+                }
+                return c.y < canvas.height;
+            });
+            
+            enemies = enemies.filter(e => {
+                e.y += e.speed;
+                
+                if(level.zigzag) {
+                    e.x += Math.sin(frameCount * 0.05 + e.zigzag) * 2;
+                    if(e.x < 0) e.x = 0;
+                    if(e.x > canvas.width - e.size) e.x = canvas.width - e.size;
+                }
+                
+                if(checkCollision(player, e)) {
+                    if(player.attackFrame > 0 && level.enemiesHaveHP) {
+                        createParticles(e.x + 20, e.y + 20, '#ff0000');
+                        return false;
+                    } else {
+                        takeDamage();
+                        return false;
+                    }
+                }
+                
+                if(level.enemiesHaveHP && player.attackFrame > 0 && 
+                   Math.abs(player.x - e.x) < 60 && Math.abs(player.y - e.y) < 60) {
+                    e.hp--;
+                    createParticles(e.x + 20, e.y + 20, '#ff6666');
+                    if(e.hp <= 0) return false;
+                }
+                
+                return e.y < canvas.height;
+            });
+            
+            projectiles = projectiles.filter(p => {
+                p.y += p.speed;
+                if(checkCollision(player, p)) {
+                    takeDamage();
+                    return false;
+                }
+                return p.y < canvas.height;
+            });
+            
+            particles = particles.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                return p.life > 0;
+            });
+            
+            frameCount++;
+        }
+        
+        function draw() {
+            const level = levels[currentLevel];
+            
+            ctx.fillStyle = level.theme.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawBackgroundEffects(level);
+            
+            collectibles.forEach(c => {
+                const scale = 1 + Math.sin(c.pulse) * 0.1;
+                
+                ctx.shadowColor = level.theme.collectColor;
+                ctx.shadowBlur = 20;
+                
+                ctx.font = `${30 * scale}px Arial`;
+                ctx.fillText(level.theme.collect, c.x, c.y + 30);
+                
+                ctx.shadowBlur = 0;
+                
+                ctx.beginPath();
+                ctx.arc(c.x + 17, c.y + 17, 20, 0, Math.PI * 2);
+                ctx.fillStyle = level.theme.collectColor + '30';
+                ctx.fill();
+            });
+            
+            enemies.forEach(e => {
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 10;
+                ctx.font = '35px Arial';
+                ctx.fillText(level.theme.enemy, e.x, e.y + 35);
+                ctx.shadowBlur = 0;
+                
+                if(level.enemiesHaveHP && e.hp < e.maxHp) {
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(e.x, e.y - 12, 35, 6);
+                    ctx.fillStyle = '#ff6666';
+                    ctx.fillRect(e.x, e.y - 12, 35 * (e.hp/e.maxHp), 6);
+                }
+            });
+            
+            ctx.shadowColor = '#00ff00';
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = '#80ff80';
+            projectiles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x + 6, p.y + 6, 7, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0;
+            
+            drawPlayer();
+            
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 5;
+                ctx.fillRect(p.x, p.y, 5, 5);
+            });
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+            
+            if(player.attackFrame > 0) {
+                ctx.strokeStyle = level.theme.accent;
+                ctx.lineWidth = 4;
+                ctx.shadowColor = level.theme.accent;
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.arc(player.x + 20, player.y + 20, 55, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        function drawBackgroundEffects(level) {
+            ctx.strokeStyle = level.theme.grid + '40';
+            ctx.lineWidth = 2;
+            for(let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for(let i = 0; i < canvas.height; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+            
+            if(currentLevel === 0) {
+                const gradient = ctx.createRadialGradient(300, 400, 0, 300, 400, 300);
+                gradient.addColorStop(0, 'rgba(255, 107, 53, 0.2)');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else if(currentLevel === 3) {
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.05)';
+                for(let i = 0; i < canvas.height; i += 3) {
+                    ctx.fillRect(0, i, canvas.width, 1);
+                }
+            }
+        }
+        
+        function drawPlayer() {
+            ctx.shadowColor = player.color;
+            ctx.shadowBlur = 15;
+            
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(player.x + 8, player.y + 8, 10, 10);
+            ctx.fillRect(player.x + 22, player.y + 8, 10, 10);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(player.x + 10, player.y + 10, 6, 6);
+            ctx.fillRect(player.x + 24, player.y + 10, 6, 6);
+            
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(player.x + 10, player.y + 28, 20, 4);
+            
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.fillRect(player.x + 5, player.y + 5, 10, 10);
+            
+            ctx.shadowBlur = 0;
+            
+            if(currentLevel === 2) {
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(player.x - 8, player.y + 8, 8, 24);
+                ctx.fillRect(player.x + 40, player.y + 8, 8, 24);
+            }
+        }
+        
+        function checkCollision(a, b) {
+            return a.x < b.x + b.size &&
+                   a.x + a.width > b.x &&
+                   a.y < b.y + b.size &&
+                   a.y + a.height > b.y;
+        }
+        
+        function createParticles(x, y, color) {
+            for(let i = 0; i < 12; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1,
+                    color
+                });
+            }
+        }
+        
+        function takeDamage() {
+            lives--;
+            document.getElementById('lives').textContent = lives;
+            createParticles(player.x + 20, player.y + 20, '#ff0000');
+            
+            canvas.style.transform = 'translate(8px, 8px)';
+            setTimeout(() => canvas.style.transform = 'translate(-8px, -8px)', 50);
+            setTimeout(() => canvas.style.transform = 'translate(8px, -8px)', 100);
+            setTimeout(() => canvas.style.transform = 'translate(0, 0)', 150);
+            
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '0';
+            flash.style.left = '0';
+            flash.style.width = '100%';
+            flash.style.height = '100%';
+            flash.style.background = 'rgba(255,0,0,0.3)';
+            flash.style.pointerEvents = 'none';
+            flash.style.zIndex = '50';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 200);
+            
+            if(lives <= 0) {
+                gameRunning = false;
+                document.getElementById('gameOverScreen').classList.add('active');
+            }
+        }
+        
+        function levelComplete() {
+            gameRunning = false;
+            const level = levels[currentLevel];
+            const modalContent = document.getElementById('levelModalContent');
+            
+            modalContent.style.borderColor = level.theme.accent;
+            document.getElementById('levelName').textContent = `¡${level.name} COMPLETADO!`;
+            document.getElementById('levelName').className = level.class;
+            document.getElementById('levelMessage').innerHTML = level.message;
+            document.getElementById('levelSpecial').innerHTML = level.special;
+            document.getElementById('levelSpecial').style.borderColor = level.theme.accent;
+            document.getElementById('levelSpecial').style.color = level.theme.accent;
+            
+            document.getElementById('levelScreen').classList.add('active');
+        }
+        
+        function nextLevel() {
+            document.getElementById('levelScreen').classList.remove('active');
+            currentLevel++;
+            
+            if(currentLevel >= levels.length) {
+                document.getElementById('finalScreen').classList.add('active');
+            } else {
+                loadLevel();
+            }
+        }
+        
+        function retryLevel() {
+            document.getElementById('gameOverScreen').classList.remove('active');
+            loadLevel();
+        }
+        
+        function gameLoop() {
+            if(!gameRunning) return;
+            spawnEntities();
+            update();
+            draw();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+        
+        document.addEventListener('touchmove', (e) => {
+            if(e.target === canvas || e.target.classList.contains('btn')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
